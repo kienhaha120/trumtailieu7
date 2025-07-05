@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Trang Admin - TSA</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="top-bar">
+    <span class="user-info">👑 Admin: <span id="userEmail"></span></span>
+    <button class="logout-btn" onclick="logout()">Đăng xuất</button>
+  </div>
+
+  <div style="padding: 30px; max-width: 800px; margin: auto;">
+    <h2>➕ Tạo tài khoản thành viên</h2>
+    <input type="email" id="newEmail" placeholder="Email thành viên" style="width:100%; padding:10px; margin-top:10px;">
+    <input type="password" id="newPassword" placeholder="Mật khẩu" style="width:100%; padding:10px; margin-top:10px;">
+    <button onclick="createUser()" style="margin-top: 10px; padding: 10px 20px;">Tạo tài khoản</button>
+
+    <hr style="margin: 40px 0;">
+
+    <h2>📤 Tải đề thi lên</h2>
+    <input type="file" id="fileInput" style="margin-top: 10px;">
+    <button onclick="uploadFile()" style="margin-top: 10px; padding: 10px 20px;">Tải lên</button>
+
+    <div id="fileList" style="margin-top: 20px;"></div>
+  </div>
+
+  <script>
+    // Hiển thị email admin
+    document.getElementById("userEmail").innerText = localStorage.getItem("userEmail") || "admin";
+
+    // Tạo tài khoản thành viên
+    function createUser() {
+      const email = document.getElementById("newEmail").value.trim();
+      const password = document.getElementById("newPassword").value.trim();
+      if (!email || !password) return alert("Vui lòng nhập đầy đủ email và mật khẩu!");
+
+      let users = JSON.parse(localStorage.getItem("users") || "[]");
+      if (users.find(u => u.email === email)) return alert("Email đã tồn tại!");
+
+      users.push({ email, password });
+      localStorage.setItem("users", JSON.stringify(users));
+      alert("Đã tạo tài khoản thành viên!");
+      document.getElementById("newEmail").value = "";
+      document.getElementById("newPassword").value = "";
+    }
+
+    // Upload file đề thi
+    function uploadFile() {
+      const input = document.getElementById("fileInput");
+      if (!input.files.length) return alert("Chọn một file để tải lên.");
+
+      const file = input.files[0];
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const files = JSON.parse(localStorage.getItem("files") || "[]");
+        files.push({ name: file.name, data: e.target.result });
+        localStorage.setItem("files", JSON.stringify(files));
+        renderFileList();
+      }
+      reader.readAsDataURL(file);
+    }
+
+    // Hiển thị danh sách file đã upload
+    function renderFileList() {
+      const files = JSON.parse(localStorage.getItem("files") || "[]");
+      let html = "<ul style='padding-left:20px;'>";
+      files.forEach((f, i) => {
+        html += `<li><a href="${f.data}" download="${f.name}">${f.name}</a></li>`;
+      });
+      html += "</ul>";
+      document.getElementById("fileList").innerHTML = html;
+    }
+
+    // Đăng xuất
+    function logout() {
+      localStorage.clear();
+      location.href = "index.html";
+    }
+
+    renderFileList();
+  </script>
+</body>
+</html>
