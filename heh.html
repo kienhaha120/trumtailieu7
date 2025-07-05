@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TSA Lab - Plateforme d'Examens</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo i {
+            font-size: 2.5rem;
+            color: #667eea;
+        }
+
+        .logo h1 {
+            color: #2c3e50;
+            font-size: 2rem;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: #2c3e50;
+            border: 2px solid #ddd;
+        }
+
+        .btn-secondary:hover {
+            background: #f8f9fa;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        /* Login Form */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 80vh;
+        }
+
+        .login-form {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        /* Dashboard */
+        .dashboard {
+            display: none;
+        }
+
+        .dashboard.active {
+            display: block;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        /* Content Areas */
+        .content-area {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .content-title {
+            font-size: 1.8rem;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Tables */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .table th,
+        .table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .table tr:hover {
+            background: #f8f9fa;
+        }
+
+        /* Exam Cards */
+        .exam-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .exam-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .exam-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.1);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .exam-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .exam-card:hover::before {
+            opacity: 1;
+        }
+
+        .exam-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .exam-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            opacity: 0.9;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.active {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .close-btn:hover {
+            color: #333;
+        }
+
+        /* Exam Taking Interface */
+        .exam-interface {
+            display: none;
+        }
+
+        .exam-interface.active {
+            display: block;
+        }
+
+        .exam-header {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .timer {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #dc3545;
+            padding: 10px 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .question-container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .question-number {
+            color: #667eea;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .question-text {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .answers-list {
+            list-style: none;
+        }
+
+        .answer-item {
+            margin-bottom: 15px;
+        }
+
+        .answer-item label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .answer-item label:hover {
+            background: #e9ecef;
+        }
+
+        .answer-item input[type="radio"] {
+            margin: 0;
+        }
+
+        .exam-navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .question-nav {
+            display: flex;
+            gap: 5px;
+        }
+
+        .question-nav-btn {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .question-nav-btn.answered {
+            background: #667eea;
+            color: white;
+        }
+
+        .question-nav-btn.current {
+            background: #28a745;
+            color: white;
+            border-color: #28a745;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .exam-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .exam-navigation {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .question-nav {
+                flex-wrap: wrap;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        /* Loading */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Status badges */
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-completed {
+            background: #cce5ff;
+            color: #004085;
+        }
+
+        .status-in-progress {
+            background: #fff3cd;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Section -->
+    <div id="loginSection" class="login-container">
+        <div class="login-form fade-in">
+            <div class="text-center mb-4">
+                <i class="fas fa-graduation-cap" style="font-size: 4rem; color: #667eea; margin-bottom: 20px;"></i>
+                <h2 style="color: #2c3e50; margin-bottom: 10px;">TSA Lab</h2>
+                <p style="color: #666;">Đăng nhập để tiếp tục</p>
+            </div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Tên đăng nhập</label>
+                    <input type="text" id="username" class="form-control" placeholder="Nhập tên đăng nhập" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Mật khẩu</label>
+                    <input type="password" id="password" class="form-control" placeholder="Nhập mật khẩu" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    <i class="fas fa-sign-in-alt"></i> Đăng nhập
+                </button>
+            </form>
+            <div class="mt-3" style="text-align: center; color: #666; font-size: 0.9rem;">
+                <p><strong>Tài khoản demo:</strong></p>
+                <p>Admin: admin / admin123</p>
+                <p>Thành viên: member1 / member123</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div id="mainApp" style="display: none;">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-graduation-cap"></i>
+                    <div>
+                        <h1>TSA Lab</h1>
+                        <p style="color: #666; font-size: 0.9rem;">Hệ thống thi trực tuyến</p>
+                    </div>
+                </div>
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div>
+                        <div id="currentUser" style="font-weight: bold; color: #2c3e50;"></div>
+                        <div id="currentRole" style="color: #666; font-size: 0.9rem;"></div>
+                    </div>
+                    <button onclick="logout()" class="btn btn-secondary">
+                        <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard -->
+        <div class="container">
+            <div id="adminDashboard" class="dashboard">
+                <!-- Admin Stats -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="color: #667eea;">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-number" id="totalUsers">0</div>
+                        <div class="stat-label">Tổng thành viên</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="color: #28a745;">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <div class="stat-number" id="totalExams">0</div>
+                        <div class="stat-label">Tổng bài thi</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="color: #dc3545;">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="stat-number" id="totalSessions">0</div>
+                        <div class="stat-label">Lượt thi</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="color: #ffc107;">
+                            <i class="fas fa-folder"></i>
+                        </div>
+                        <div class="stat-number" id="totalFiles">0</div>
+                        <div class="stat-label">Tệp tải lên</div>
+                    </div>
+                </div>
+
+                <!-- Admin Navigation -->
+                <div class="content-area">
+                    <div class="content-header">
+                        <div class="content-title">
+                            <i class="fas fa-cog"></i>
+                            Quản lý hệ thống
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                        <button onclick="showUserManagement()" class="btn btn-primary">
+                            <i class="fas fa-users"></i> Quản lý thành viên
+                        </button>
+                        <button onclick="showExamManagement()" class="btn btn-primary">
+                            <i class="fas fa-edit"></i> Quản lý bài thi
+                        </button>
+                        <button onclick="showFileManagement()" class="btn btn-primary">
+                            <i class="fas fa-folder"></i> Quản lý tệp
+                        </button>
+                        <button onclick="showRoomManagement()" class="btn btn-primary">
+                            <i class="fas fa-door-open"></i> Quản lý phòng thi
+                        </button>
+                        <button onclick="showResults()" class="btn btn-success">
+                            <i class="fas fa-chart-bar"></i> Xem kết quả
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Member Dashboard -->
+            <div id="memberDashboard" class="dashboard">
+                <div class="content-area">
+                    <div class="content-header">
+                        <div class="content-title">
+                            <i class="fas fa-book"></i>
+                            Bài thi có sẵn
+                        </div>
+                    </div>
+                    <div class="exam-grid" id="availableExams">
+                        <!-- Exams will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Member Files -->
+                <div class="content-area">
+                    <div class="content-header">
+                        <div class="content-title">
+                            <i class="fas fa-download"></i>
+                            Tài liệu học tập
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="table" id="memberFiles">
+                            <thead>
+                                <tr>
+                                    <th>Tên tệp</th>
+                                    <th>Kích thước</th>
+                                    <th>Ngày tải lên</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Exam Taking Interface -->
+    <div id="examInterface" class="exam-interface">
+        <div class="exam-header">
+            <div>
+                <h3 id="examTitle">Bài thi</h3>
+                <p id="examInfo">Thông tin bài thi</p>
+            </div>
+            <div class="timer" id="examTimer">00:00</div>
+        </div>
+
+        <div class="container">
+            <div class="question-container" id="questionContainer">
+                <!-- Questions will be loaded here -->
+            </div>
+
+            <div class="exam-navigation">
+                <div>
+                    <button onclick="previousQuestion()" class="btn btn-secondary" id="prevBtn">
+                        <i class="fas fa-chevron-left"></i> Câu trước
+                    </button>
+                    <button onclick="nextQuestion()" class="btn btn-primary" id="nextBtn">
+                        Câu tiếp <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                <div class="question-nav" id="questionNav">
+                    <!-- Question navigation will be here -->
+                </div>
+                <div>
+                    <button onclick="submitExam()" class="btn btn-success" id="submitBtn">
+                        <i class="fas fa-check"></i> Nộp bài
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Modal Title</h3>
+                <button class="close-btn" onclick="closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="modalBody">
+                <!-- Modal content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Application State
+        let currentUser = null;
+        let currentExam = null;
+        let currentQuestionIndex = 0;
+        let examTimer = null;
+        let timeRemaining = 0;
+        let userAnswers = {};
+
+        // Sample Data
+        const users = [
+            { id: 1, username: 'admin', password: 'admin123', role: 'admin', email: 'admin@tsa.com', active: true },
+            { id: 2, username: 'member1', password: 'member123', role: 'member', email: 'member1@tsa.com', active: true },
+            { id: 3, username: 'member2', password: 'member123', role: 'member', email: 'member2@tsa.com', active: true }
+        ];
+
+        const exams = [
+            {
+                id: 1,
+                title: 'TỰ DUY TOÁN HỌC',
+                description: 'Bài thi tư duy toán học cơ bản',
+                duration: 60,
+                questions: [
+                    {
+                        id: 1,
+                        text: 'Cho dãy số: 2, 4, 6, 8, ?. Số tiếp theo là:',
+                        answers: [
+                            { id: 1, text: '10', correct: true },
+                            { id: 2, text: '12', correct: false },
+                            { id: 3, text: '14', correct: false },
+                            { id: 4, text: '16', correct: false }
+                        ]
+                    },
+                    {
+                        id: 2,
+                        text: 'Nếu A = 1, B = 2, C = 3, thì ABC = ?',
+                        answers: [
+                            { id: 1, text: '123', correct: true },
+                            { id: 2, text: '6', correct: false },
+                            { id: 3, text: '321', correct: false },
+                            { id: 4, text: '111', correct: false }
+                        ]
+                    }
+                ],
+                active: true
+            },
+            {
+                id: 2,
+                title: 'TỰ DUY KHOA HỌC',
+                description: 'Bài thi tư duy khoa học',
+                duration: 45,
+                questions: [
+                    {
+                        id: 1,
+                        text: 'Nguyên tố nào có ký hiệu hóa học là H?',
+                        answers: [
+                            { id: 1, text: 'Hidro', correct: true },
+                            { id: 2, text: 'Heli', correct: false },
+                            { id: 3, text: 'Hafni', correct: false },
+                            { id: 4, text: 'Hassium', correct: false }
+                        ]
+                    }
+                ],
+                active: true
+            }
+        ];
+
+        const files = [
+            { id: 1, name: 'Hướng dẫn thi TSA.pdf', size: '2.5 MB', uploadDate: '2024-01-15' },
+            { id: 2, name: 'Đề thi mẫu.docx', size: '1.2 MB', uploadDate: '2024-01-10' }
+        ];
+
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+        });
+
+        function initializeApp() {
+            // Check if user is logged in
+            const savedUser = localStorage.getItem('currentUser');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                showMainApp();
+            }
+        }
+
+        // Login Function
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            const user = users.find(u => u.username === username && u.password === password);
+            
+            if (user && user.active) {
+                currentUser = user;
+                localStorage.setItem('currentUser', JSON.stringify(user));
+                showMainApp();
+            } else {
+                alert('Tên đăng nhập hoặc mật khẩu không chính xác!');
+            }
+        });
+
+        function showMainApp() {
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('mainApp').style.display = 'block';
+            
+            // Update user info
+            document.getElementById('currentUser').textContent = currentUser.username;
+            document.getElementById('currentRole').textContent = currentUser.role === 'admin' ? 'Quản trị viên' : 'Thành viên';
+            
+            // Show appropriate dashboard
+            if (currentUser.role === 'admin') {
+                showAdminDashboard();
+            } else {
+                showMemberDashboard();
+            }
+        }
+
+        function showAdminDashboard() {
+            document.getElementById('adminDashboard').classList.add('active');
+            document.getElementById('memberDashboard').classList.remove('active');
+            
+            // Update stats
+            document.getElementById('totalUsers').textContent = users.filter(u => u.role === 'member').length;
+            document.getElementById('totalExams').textContent = exams.length;
+            document.getElementById('totalSessions').textContent = '15';
+            document.getElementById('totalFiles').textContent = files.length;
+        }
+
+        function showMemberDashboard() {
+            document.getElementById('memberDashboard').classList.add('active');
+            document.getElementById('adminDashboard').classList.remove('active');
+            
+            loadAvailableExams();
+            loadMemberFiles();
+        }
+
+        function loadAvailableExams() {
+            const container = document.getElementById('availableExams');
+            container.innerHTML
