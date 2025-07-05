@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đăng nhập TSA</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="login-body">
+  <div class="login-container">
+    <div class="login-form">
+      <h1>🎓 Hệ thống Luyện thi TSA</h1>
+      <p class="subtitle">Vui lòng đăng nhập để tiếp tục</p>
+      <input type="email" id="email" placeholder="Email của bạn" required>
+      <input type="password" id="password" placeholder="Mật khẩu" required>
+      <button onclick="login()">Đăng nhập</button>
+      <p class="note">Tài khoản admin mặc định: <strong>admin@example.com / 123456</strong></p>
+    </div>
+  </div>
+
+  <script>
+    function login() {
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const users = JSON.parse(localStorage.getItem("users") || "[]");
+
+      if (email === "admin@example.com" && password === "123456") {
+        localStorage.setItem("role", "admin");
+        localStorage.setItem("userEmail", email);
+        window.location.href = "admin.html";
+        return;
+      }
+
+      const found = users.find(u => u.email === email && u.password === password);
+      if (found) {
+        localStorage.setItem("role", "member");
+        localStorage.setItem("userEmail", email);
+        window.location.href = "member.html";
+      } else {
+        alert("Tài khoản hoặc mật khẩu không chính xác!");
+      }
+    }
+  </script>
+</body>
+</html>
